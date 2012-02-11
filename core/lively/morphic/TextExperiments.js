@@ -29,9 +29,6 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         $super(this.defaultShape());
         
         this.leanText = new lively.LeanText(this.renderContext().shapeNode);
-        //this.textNode = this.leanText.getTextNode();
-
-        //this.leanText = this.renderContextDispatch('createTextNode');
 
         this.setExtent(pt(100,100));
 
@@ -41,6 +38,8 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         this.evalEnabled = false;
         this.fit();*/
     },
+
+
 },
 'styling', {
     applyStyle: function($super, spec) {
@@ -1855,6 +1854,11 @@ Object.subclass('lively.LeanText',
         this.createTextNode();
         this.padding = 2;
     },
+    recreateOn: function(parentNode) {
+        this.parentNode = parentNode;
+        this.textNode = this.createTextNode();
+    },
+
 
     createTextNode: function() {
         this.textNode = $('<div>Sample Text</div>');
@@ -1863,6 +1867,7 @@ Object.subclass('lively.LeanText',
         this.textNode.attr('height', '100%');
         this.textNode.css('padding: ' + this.padding + 'px');
         $(this.parentNode).append(this.textNode);
+        return this.textNode;
     },
     getWidth: function() {
         return $(this.textNode).width() + 2 * this.padding;

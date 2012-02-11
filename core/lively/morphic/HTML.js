@@ -990,11 +990,14 @@ lively.morphic.NewText.addMethods(
 'rendering', {
     initHTML: function($super, ctx) {
 
-        if (!ctx.textNode) ctx.textNode = this.createTextNodeHTML();
         $super(ctx);
-
         //FIXME implement
+
+
         return;
+
+        if (!ctx.textNode) ctx.textNode = this.createTextNodeHTML();
+        
 
         this.setFontSizeHTML(ctx, this.getFontSize());
         this.setFontFamilyHTML(ctx, this.getFontFamily());
@@ -1015,6 +1018,9 @@ lively.morphic.NewText.addMethods(
         this.fit();
     },
     appendTextHTML: function(ctx) {
+        //FIXME needed?
+        return
+
         if (!ctx.morphNode) throw dbgOn(new Error('appendText: no morphNode!'))
         if (!ctx.shapeNode) throw dbgOn(new Error('appendText: no shapeNode!'))
         if (!ctx.textNode) throw dbgOn(new Error('appendText: no textNode!'))
@@ -1131,6 +1137,15 @@ lively.morphic.NewText.addMethods(
                              'word-wrap: break-word;';
         return node;
     },
+    prepareForNewRenderContext: function($super, newCtx) {
+        $super(newCtx);
+        if (!this.leanText) {
+            this.leanText = new lively.LeanText(newCtx.shapeNode);
+        } else {
+            this.leanText.recreateOn(newCtx.shapeNode);
+        }
+    },
+
 });
 
 }) // end of module
