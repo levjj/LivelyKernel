@@ -42,7 +42,11 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 'styling', {
     applyStyle: function($super, spec) {
         $super(spec);
-        if (spec.fixedWidth !== undefined) {
+
+        return;
+        // FIXME implement
+
+        /*if (spec.fixedWidth !== undefined) {
             this.setFixedWidth(spec.fixedWidth);
             this.fit();
         }
@@ -58,14 +62,17 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         if (spec.whiteSpaceHandling !== undefined) this.setWhiteSpaceHandling(spec.whiteSpaceHandling);
         if (spec.syntaxHighlighting !== undefined) spec.syntaxHighlighting ? this.enableSyntaxHighlighting() : this.disableSyntaxHighlighting();
         if (spec.emphasize !== undefined) this.emphasizeAll(spec.emphasize);
-        return this;
+        return this;*/
     },
 },
 'accessing', {
     setExtent: function($super, value) {
         $super(value);
 
-        if (this.owner && this.owner.isInLayoutCycle) return;
+        //FIXME anything?
+        return;
+
+        /*if (this.owner && this.owner.isInLayoutCycle) return;
 
         var textExtent = this.getTextExtent(),
             scrollbarExtent = this.getScrollBarExtent(),
@@ -98,11 +105,15 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         } else {
             this.setMaxTextHeight(null);
             this.setMinTextHeight(null);
-        }
+        }*/
     },
 
-    getTextExtent: function() { return this.renderContextDispatch('getTextExtent') },
-    getTextBounds: function() { return pt(0,0).extent(this.getTextExtent()) },
+    getTextExtent: function() { 
+        return this.leanText.getTextExtent();
+    },
+    getTextBounds: function() { 
+        return pt(0,0).extent(this.getTextExtent()) 
+    },
     visibleTextBounds: function() {
         return this.innerBounds().insetByRect(this.getPadding());
     },
@@ -138,12 +149,30 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 
     setTextString: function(string) { return this.textString = string },
     getTextString: function() { return this.textString },
-    appendTextString: function(string) { return this.textString += string },
+    appendTextString: function(string) { 
+        return this.textString += string 
+    },
 
-    setTextColor: function(color) { return this.morphicSetter('TextColor', color) },
-    getTextColor: function() { return this.morphicGetter('TextColor') || Color.black },
-    setFontSize: function(size) { return this.morphicSetter('FontSize', size) },
-    getFontSize: function() { return this.morphicGetter('FontSize') },
+    setTextColor: function(color) { 
+        // FIXME implement
+        return;
+        // return this.morphicSetter('TextColor', color) 
+    },
+    getTextColor: function() { 
+        // FIXME implement
+        //return this.morphicGetter('TextColor') ||
+        return Color.black 
+    },
+    setFontSize: function(size) { 
+        //FIXME implement
+        //return this.morphicSetter('FontSize', size)
+        return;
+    },
+    getFontSize: function() { 
+        // FIXME implement
+        return 10;
+        //return this.morphicGetter('FontSize') 
+    },
     setFontFamily: function(fontName) { return this.morphicSetter('FontFamily', fontName) },
     getFontFamily: function() { return this.morphicGetter('FontFamily') },
 
@@ -239,7 +268,9 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         this.fit();
         return true;
 
-        this.cachedTextString = null;
+        // FIXME special keys
+
+        /*this.cachedTextString = null;
 
         if (evt.isAltDown() && evt.isArrowKey()) {
             // alt with arrow keys can trigger browser forward/backward actions
@@ -278,9 +309,15 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         if (c === Event.KEY_UP) return this.onUpPressed(evt);
         if (c === Event.KEY_DOWN) return this.onDownPressed(evt);
 
-        return true;
+        return true;*/
     },
     onKeyUp: function(evt) {
+
+        evt.stop();
+        return;
+        // FIXME implement
+
+        /*
         // actually it should only be necessary to null the text cache here, it should
         // be possible to remove cachedTextString = null from onKeyPress and onKeyDown
         this.cachedTextString = null
@@ -296,10 +333,15 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
             this.priorSelectionRange = this.getSelectionRange();
 
         evt.stop();
-        return true;
+        return true;*/
     },
     onKeyPress: function(evt) {
-        this.cachedTextString = null;
+
+        evt.stopPropagation;
+        return true;
+
+        // FIXME implement    
+        /*this.cachedTextString = null;
 
         // save info for 'More' command
         this.rememberSelectionForDoMore('onKeyPress');
@@ -315,13 +357,17 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 
         this.fixChunksDelayed();
         evt.stopPropagation()
-        return true;
+        return true;*/
     },
     onPaste: function(evt) {
-        var htmlData = evt.clipboardData && evt.clipboardData.getData("text/html"),
+
+        evt.stop();
+        return true;
+
+/*        var htmlData = evt.clipboardData && evt.clipboardData.getData("text/html"),
             textData = evt.clipboardData && evt.clipboardData.getData("text/plain");
 
-        if ((!htmlData && !textData) || htmlData === textData/*when html text is pasted*/) {
+        if ((!htmlData && !textData) || htmlData === textData) {
             this.fixChunksDelayed();
             return false; // let HTML magic handle paste
         }
@@ -331,14 +377,20 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         richText.replaceSelectionInMorph(this)
 
         evt.stop()
-        return true;
+        return true;*/
     },
     onCut: function(evt) {
-        this.fixChunksDelayed()
+        return;
+        // FIXME implement
+        //this.fixChunksDelayed()
     },
 
 
     processCommandKeys: function(evt) {
+
+        return;
+        //FIXME implement
+
         var key = evt.getKeyChar();
         // alert("key " + key)
         if (key) key = key.toLowerCase();
@@ -436,6 +488,10 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
     doDoit: function() { this.evalSelection(false) },
     doPrintit: function() { this.evalSelection(true) },
     doSave: function() {
+
+        return;
+        // FIXME implement
+
         // resetting cachedTextString is necessary when doSave is not triggered by
         // cmd+s but from outside (e.g. from a button). The cachedTextString would not have
         // the current textString but an old one
@@ -470,6 +526,10 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
     },
 
     doMore: function(doMuchMore) {
+
+        return;
+        // FIXME implement
+
         if (doMuchMore) {  // call with true (shift-M) for replace-all
             // Simplest way:  just do N replacements
             while (this.doMore(false)) { }  // Keep repeating the change while possible
@@ -500,6 +560,10 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         this.world().openMethodFinderFor(this.getSelectionOrLineString())
     },
     rememberSelectionForDoMore: function(fromWhere) {
+
+        return;
+        // FIXME implement
+
         // This gets called from any typing.  It can tell what is being
         // replaced by testing for a non-zero selection.
         // At that point, it also records the location consistent with DoMore
@@ -604,6 +668,10 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         this.insertAtCursor(replacement, true, true);
     },
     splitText: function() {
+
+        //FIXME implement
+        return;
+
         var selRange = this.getSelectionRange(),
             from = Math.max(selRange[0], selRange[1]),
             to = this.textString.length,
@@ -852,6 +920,12 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 },
 'selection', {
     domSelection: function() {
+
+        return null;
+
+        //FIXME implement
+
+
         var sel = Global.getSelection(), node = sel.focusNode, textNode = this.renderContext().textNode;
         while(node) {
             if (textNode === node) return sel;
@@ -862,6 +936,9 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 
     selectionString: function() {
                 
+        // FIXME
+        return ''
+
         // HTML only, works in FF & Chrome
         var sel = Global.getSelection();
         if (!sel) { return ''; }
@@ -884,12 +961,20 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
     },
 
     insertAtCursor: function(string, selectIt, overwriteSelection) {
+
+        //FIXME implement
+        return;
+
         this.insertElementAtCursor(NodeFactory.createText(String(string)), selectIt, overwriteSelection);
     },
 
     insertElementAtCursor: function(element, selectIt, overwriteSelection, replacementTextChunks) {
         //console.log('Text>>insertElementAtCursor');
         // FIXME refactor!!!
+
+                //FIXME implement
+        return;
+
         var node = element,
             selRange = this.getSelectionRange(),
             sel = this.domSelection(),
@@ -932,6 +1017,8 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         this.fixChunks()
     },
     insertTextChunksAtCursor: function(newChunks, selectIt, overwriteSelection) {
+        //FIXME implement
+        return;
         //console.log('Text>>insertTextChunksAtCursor');
         var selRange = this.getSelectionRange();
         if (!selRange) { throw new Error("" + this + ": No selection to replace")}
@@ -973,6 +1060,9 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 
     removeTextSelection: function() {},
     getSelectionOrLineString: function() {
+        //FIXME implement
+        return '';
+
         var sel = this.domSelection(),
             range = sel.getRangeAt(0);
         if (range.collapsed)
@@ -980,6 +1070,10 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         return this.selectionString();
     },
     selectCurrentLine: function() {
+
+        //FIXME implement
+        return;
+
         var sel = this.domSelection();
         if (sel.anchorNode) {
             sel.modify('move', 'left', 'lineboundary');
@@ -1010,6 +1104,10 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 
 
     setSelectionRange: function(start, end) {
+
+        //FIXME implement
+        return;
+
         if (start < 0) { start = 0; }
         if (start > this.textString.length) { start = this.textString.length; }
         if (end < 0) { end = 0; }
@@ -1051,9 +1149,8 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 
     getSelectionRange: function() {
 
-        if (UserAgent.fireFoxVersion) {
-            return this.getSelectionRange2();
-        }
+       //FIXME implement
+        return [0,0];
 
         // FIXME this only works for textNodes that have the form
         // <div><span></text*></span*></div> or <div></text*></div>
@@ -1123,71 +1220,7 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 
         return result;
     },
-    getSelectionRange2: function() {
-        console.log('Enter Text>>getSelectionRange2');
-        // FIXME this only works for textNodes that have the form
-        // <div><span></text*></span*></div> or <div></text*></div>
 
-        var parent = this.renderContext().textNode;
-        if (!parent) return [0,0];
-        var textNodeType = parent.TEXT_NODE;
-        var textNodes = [];
-
-        // collect the text nodes
-        for (var i = 0; i < parent.childNodes.length; i++) {
-            var child = parent.childNodes[i];
-            if (child.nodeType === textNodeType) {
-                textNodes.push(child)
-            } else {
-                for (var j = 0; j < child.childNodes.length; j++) {
-                    var childchild = child.childNodes[j];
-                    if (childchild.nodeType === textNodeType)
-                        textNodes.push(childchild)
-                }
-            }
-        }
-        // --------
-
-        // this function calculates how many characters are between the start of
-        // the parent element and the node.
-        // The node is expected to be a childNode of parent
-        function nodeOffsetFrom(node) {
-            if (!node) return 0;
-            var offset = 0;
-            for (var i = 0; i < textNodes.length; i++) {
-                var nodeBefore = textNodes[i];
-                if ((node.compareDocumentPosition(nodeBefore) & node.DOCUMENT_POSITION_PRECEDING) != 0) {
-                    offset += nodeBefore.textContent.length;
-                }
-            }
-            return offset;
-        }
-        var sel = this.domSelection();
-        if (!sel) return null;
-
-        // anchor is the start node, focusNode is the end node of the selection
-        // see https://developer.mozilla.org/en/DOM/Selection
-
-        // there is a problem with the above algorithm when calling getSelectionRange
-        // when the caret is at the end of the text. In this case anchorNode and focusNode
-        // are not textNodes and nodeOffsetFrom() would not return anything meaningful
-        // Since anchorNode.childNodes[anchorOffset] and focusNode.childNodes[focusOffset]
-        // identify the node from/to selection was exist, use this node for calculation
-        // In this case return the text length as indexes of the range
-        var anchorIsText = sel.anchorNode.nodeType == textNodeType;
-        var anchorNode = anchorIsText ? sel.anchorNode : sel.anchorNode.childNodes[sel.anchorOffset];
-        var anchorOffset = anchorIsText ? sel.anchorOffset : 0;
-
-        var focusIsText = sel.focusNode.nodeType == textNodeType;
-        var fixedFocusOffset = sel.focusOffset;//!focusIsText && (sel.focusOffset >= sel.focusNode.childNodes.length) ? (sel.focusNode.childNodes.length - 1) : sel.focusOffset;
-        var focusNode = focusIsText ? sel.focusNode : sel.focusNode.childNodes[fixedFocusOffset];
-        var focusOffset = focusIsText ? sel.focusOffset : 0;
-
-        var result = [nodeOffsetFrom(anchorNode) + anchorOffset,
-                      nodeOffsetFrom(focusNode) + focusOffset];
-
-        return result;
-    },
 
     selectAll: function() {
         if (this.textString.length > 0)
@@ -1222,6 +1255,11 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 
     selectWord: function(str, i1) { // Selection caret before char i1
         // Most of the logic here is devoted to selecting matching backets
+
+        //FIXME implement
+        return;
+
+
         var rightBrackets = "*)}]>'\"";
         var leftBrackets = "*({[<'\"";
         function isWhiteSpace(c) { return c === '\t' || c === ' '; }
@@ -1305,9 +1343,16 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 'scrolling', {
     basicGetScrollableNode: function(evt) {
         // for ScrollableTrait
-        return this.renderContext().shapeNode
+
+        //FIXME implement
+        return;
+
+        //return this.renderContext().shapeNode
     },
     scrollSelectionIntoView: function() {
+
+        //FIXME implement
+        return;    
         this.scrollRectIntoView(this.getSelectionBounds(), true)
     },
 },
@@ -1384,6 +1429,10 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
             world.logError(e)
     },
     textNodeString: function() {
+
+        //FIXME implement
+        return '';
+
         var textNode = this.renderContext().textNode;
         if (!textNode) return 'textNode not yet accessible';
         var isolatedTextNode = textNode.cloneNode(false/*no children*/)
@@ -1410,6 +1459,9 @@ this. textNodeString()
         // startIndex: the (global)startIndex of the node in the whole text,
         // endIndex: global end index
         // method toString for debugging
+
+        //FIXME implement
+        return '';
 
         var textNodeType = this.renderContext().textNode.TEXT_NODE;
         function isTextNode(node) { return node && node.nodeType == textNodeType }
@@ -1455,6 +1507,10 @@ this. textNodeString()
         // the index used for lookup is sanitized
         // example: subnodes: <text>foo</text><text>bar</text>, idx: 5
         // would return [<text>bar</text>, 2] (local idx between a and r)
+
+        //FIXME implement
+        return;
+
         idx = Math.max(0, Math.min(idx, this.textString.length));
         var textParts = this.getTextElements();
         for (var i = 0; i < textParts.length; i++) {
@@ -1811,6 +1867,10 @@ Object.subclass('lively.LeanText',
     getHeight: function() {
         return $(this.textNode).height() + 2 * this.padding;
     },
+    getTextExtent: function() {
+        return pt(this.getWidth(), this.getHeight());
+    },
+
     getText: function() {
         return $(this.textNode).text();
     },

@@ -989,8 +989,13 @@ lively.morphic.NewText.addMethods(
 },
 'rendering', {
     initHTML: function($super, ctx) {
+
         if (!ctx.textNode) ctx.textNode = this.createTextNodeHTML();
         $super(ctx);
+
+        //FIXME implement
+        return;
+
         this.setFontSizeHTML(ctx, this.getFontSize());
         this.setFontFamilyHTML(ctx, this.getFontFamily());
         this.setAlignHTML(ctx, this.getAlign());
