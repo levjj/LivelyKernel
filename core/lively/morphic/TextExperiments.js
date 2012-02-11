@@ -314,7 +314,7 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         return true;*/
     },
     onKeyUp: function(evt) {
-
+        this.fit();
         evt.stop();
         return;
         // FIXME implement
@@ -1849,6 +1849,7 @@ Object.subclass('lively.LeanText',
 
 'default category', {
     initialize: function(parentNode) {
+        this.serializedString = '';
         this.parentNode = parentNode;
         this.textNode = null;
         this.createTextNode();
@@ -1861,7 +1862,7 @@ Object.subclass('lively.LeanText',
 
 
     createTextNode: function() {
-        this.textNode = $('<div>Sample Text</div>');
+        this.textNode = $('<div>' + this.serializedString + '</div>');
         this.textNode.attr('contenteditable', 'true');
         this.textNode.attr('width', '100%');
         this.textNode.attr('height', '100%');
@@ -1889,10 +1890,215 @@ Object.subclass('lively.LeanText',
         return this.textNode;
     },
 
+});
 
-
-
+lively.morphic.NewText.addMethods(
+'serialization', {
+    doNotSerialize: ['charsTyped'],
+    onstore: function($super) {
+        $super();
+        this.leanText.serializedString = this.textString;
+        return;
+    },
+    onrestore: function($super) {
+        $super();
+    },
+    prepareForNewRenderContext: function($super,renderCtx) {
+        $super(renderCtx);
+        if (this.serializedString) {
+            this.textString = this.serializedString;
+            return;
+        }
+    },
 
 });
+
+
+lively.morphic.NewText.addMethods(
+'HTML render settings', {
+    htmlDispatchTable: {
+        updateText: 'updateTextHTML',
+        setTextExtent: 'setTextExtentHTML',
+        setMaxTextWidth: 'setMaxTextWidthHTML',
+        setMaxTextHeight: 'setMaxTextHeightHTML',
+        setMinTextWidth: 'setMinTextWidthHTML',
+        setMinTextHeight: 'setMinTextHeightHTML',
+        getTextExtent: 'getTextExtentHTML',
+        getTextString: 'getTextStringHTML',
+        ignoreTextEvents: 'ignoreTextEventsHTML',
+        unignoreTextEvents: 'unignoreTextEventsHTML',
+        enableTextEvents: 'enableTextEventsHTML',
+        setFontFamily: 'setFontFamilyHTML',
+        setFontSize: 'setFontSizeHTML',
+        setTextColor: 'setTextColorHTML',
+        setPadding: 'setPaddingHTML',
+        setAlign: 'setAlignHTML',
+        setVerticalAlign: 'setVerticalAlignHTML',
+        setDisplay: 'setDisplayHTML',
+        setWhiteSpaceHandling: 'setWhiteSpaceHandlingHTML',
+        focusMorph: 'focusMorphHTML'
+    },
+},
+'rendering', {
+    initHTML: function($super, ctx) {
+
+        $super(ctx);
+        //FIXME implement
+
+
+        return;
+
+        if (!ctx.textNode) ctx.textNode = this.createTextNodeHTML();
+        
+
+        this.setFontSizeHTML(ctx, this.getFontSize());
+        this.setFontFamilyHTML(ctx, this.getFontFamily());
+        this.setAlignHTML(ctx, this.getAlign());
+        this.setVerticalAlignHTML(ctx, this.getVerticalAlign());
+        this.setDisplayHTML(ctx, this.getDisplay());
+        this.setTextColorHTML(ctx, this.getTextColor());
+        this.setWhiteSpaceHandlingHTML(ctx, this.getWhiteSpaceHandling());
+        this.fit();
+        if (this.textChunks)
+            this.textChunks.forEach(function(chunk) { chunk.addTo(this) }, this)
+        else
+            this.updateTextHTML(ctx, this.textString);
+    },
+    appendHTML: function($super, ctx, optMorphAfter) {
+        $super(ctx, optMorphAfter);
+        this.appendTextHTML(ctx);
+        this.fit();
+    },
+    appendTextHTML: function(ctx) {
+        //FIXME needed?
+        return
+
+        if (!ctx.morphNode) throw dbgOn(new Error('appendText: no morphNode!'))
+        if (!ctx.shapeNode) throw dbgOn(new Error('appendText: no shapeNode!'))
+        if (!ctx.textNode) throw dbgOn(new Error('appendText: no textNode!'))
+        ctx.shapeNode.appendChild(ctx.textNode);
+    },
+    updateTextHTML: function(ctx, string) {
+        this.firstTextChunk().textString = string;
+    },
+},
+'accessing', {
+    getTextExtentHTML: function(ctx) {
+        if (!ctx.textNode) return pt(0,0);
+        return ctx.textNode.scrollHeight != 0 ?
+            pt(ctx.textNode.scrollWidth, ctx.textNode.scrollHeight) : this.getExtent();
+    },
+    setTextExtentHTML: function(ctx, value) {
+        if (ctx.textNode)
+            ctx.domInterface.setExtent(ctx.textNode, value);
+    },
+
+    setMaxTextWidthHTML: function(ctx, value) {
+        if (ctx.textNode)
+            ctx.domInterface.setMaxWidth(ctx.textNode, value);
+    },
+    setMaxTextHeightHTML: function(ctx, value) {
+        if (ctx.textNode)
+            ctx.domInterface.setMaxHeight(ctx.textNode, value);
+    },
+    setMinTextHeightHTML: function(ctx, value) {
+        if (ctx.textNode)
+            ctx.domInterface.setMinHeight(ctx.textNode, value);
+    },
+    setMinTextWidthHTML: function(ctx, value) {
+        if (ctx.textNode)
+            ctx.domInterface.setMinWidth(ctx.textNode, value);
+    },
+    getTextStringHTML: function(ctx) { return ctx.textNode ? ctx.textNode.textContent : '' },
+    setFontSizeHTML: function(ctx, size) {
+        if (ctx.textNode)
+            ctx.textNode.style.fontSize = size + 'pt'
+    },
+    setFontFamilyHTML: function(ctx, fontName) {
+        if (ctx.textNode)
+            ctx.textNode.style.fontFamily = fontName
+    },
+    setTextColorHTML: function(ctx, color) {
+        if (ctx.textNode) {
+            if (color && color.toCSSString) color = color.toCSSString();
+            ctx.textNode.style.color = color
+        }
+    },
+    setPaddingHTML: function(ctx, r) {
+        // TODO Deprecated, to be removed
+        console.warn('lively.morphic.Text>>setPaddingHTML should not be called anymore!!!')
+    },
+    setAlignHTML: function(ctx, alignMode) {
+        if (!ctx.textNode) return;
+        ctx.textNode.style.textAlign = alignMode;
+        this.setWhiteSpaceHandling(alignMode === 'justify' ? 'pre-line' : 'pre-wrap');
+    },
+    setVerticalAlignHTML: function(ctx, valignMode) {
+        if (ctx.textNode)
+            ctx.textNode.style.verticalAlign = valignMode;
+    },
+    setDisplayHTML: function(ctx, mode) {
+        if (ctx.textNode)
+            ctx.textNode.style.display = mode;
+    },
+    setWhiteSpaceHandlingHTML: function(ctx, modeString) {
+        if (ctx.textNode)
+            ctx.textNode.style.whiteSpace = modeString || 'normal';
+    },
+    getWhiteSpaceHandlingHTML: function(ctx) {
+        return ctx.textNode ? (ctx.textNode.style.whiteSpace || 'normal') : 'normal';
+    },
+},
+'event management', {
+    ignoreTextEventsHTML: function(ctx) {
+        if (ctx.textNode)
+            ctx.textNode.contentEditable = false;
+    },
+    unignoreTextEventsHTML: function(ctx) {
+        if (ctx.textNode)
+            ctx.textNode.contentEditable = true;
+    },
+
+    enableTextEventsHTML: function(ctx) {
+        if (ctx.textNode)
+            ctx.textNode.contentEditable = true;
+    },
+    focusHTML: function(ctx) {
+        var node = ctx.textNode;
+        if (node && !this.isFocused() && node.tabIndex !== undefined) node.focus();
+    },
+    focusMorphHTML: function(ctx) {
+        var node = ctx.morphNode;
+        if (node && !this.isFocused() && node.tabIndex !== undefined) node.focus();
+    },
+    blurHTML: function(ctx) {
+        var node = ctx.textNode;
+        if (node && this.isFocused()) node.blur();
+    },
+},
+'node creation', {
+    createTextNodeHTML: function() {
+
+        //this.leanText = new lively.LeanText(this.renderContext().shapeNode);
+        //return this.leanText.getTextNode();
+        
+        var node = XHTMLNS.create('div');
+        node.contentEditable = true;
+        node.className = 'visibleSelection';
+        node.style.cssText = 'position: absolute;' + // needed for text extent calculation
+                             'word-wrap: break-word;';
+        return node;
+    },
+    prepareForNewRenderContext: function($super, newCtx) {
+        $super(newCtx);
+        if (!this.leanText) {
+            this.leanText = new lively.LeanText(newCtx.shapeNode);
+        } else {
+            this.leanText.recreateOn(newCtx.shapeNode);
+        }
+    },
+
+});
+
 
 }) // end of module
