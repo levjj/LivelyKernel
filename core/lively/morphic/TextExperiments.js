@@ -27,11 +27,16 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 'initializing', {
     initialize: function($super, bounds, string) {
         $super(this.defaultShape());
-        if (bounds) this.setBounds(bounds);
+        
+        this.leanText = new lively.LeanText(this.renderContext().shapeNode);
+
+        this.setExtent(pt(100,100));
+
+        /*if (bounds) this.setBounds(bounds);
         this.textString = string || '';
         this.charsTyped = '';
         this.evalEnabled = false;
-        this.fit();
+        this.fit();*/
     },
 },
 'styling', {
@@ -102,14 +107,20 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         return this.innerBounds().insetByRect(this.getPadding());
     },
     get textString() {
+
+        return this.leanText.getText();
+        /*
         // when the prototype property is accessed
         if (this === this.constructor.prototype) return;
         if (!this.cachedTextString)
             this.cachedTextString = this.renderContextDispatch('getTextString');
-        return this.cachedTextString;
+        return this.cachedTextString;*/
     },
     set textString(string) {
-        string = String(string);
+
+        this.leanText.setText(string);
+
+        /*string = String(string);
 
         // setting the textString removes all the content in the text morph
         this.removeTextChunks();
@@ -122,7 +133,7 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         // if (this.attributeConnections)
             // lively.bindings.signal(this, 'textString', string);
 
-        return string;
+        return string;*/
     },
 
     setTextString: function(string) { return this.textString = string },
@@ -177,7 +188,10 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
     },
     fit: function() {
         if (!this.owner || this.owner.isInLayoutCycle) return;
-        var extent = this.getExtent(),
+
+        this.setExtent(pt(this.getExtent().x, this.leanText.getHeight()));
+
+        /*var extent = this.getExtent(),
             textExtent = this.getTextExtent(),
             borderWidth = this.getBorderWidth(),
             padding = this.getPadding(),
@@ -185,7 +199,7 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
             paddingHeight = padding.top() + padding.bottom(),
             width = this.fixedWidth ? extent.x : (textExtent.x + borderWidth*2 + paddingWidth),
             height = this.fixedHeight ? extent.y : (textExtent.y + borderWidth*2 + paddingHeight);
-        this.setExtent(pt(width, height));
+        this.setExtent(pt(width, height));*/
     },
 },
 'text modes', {
@@ -221,6 +235,10 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
 'keyboard events', {
 
     onKeyDown: function(evt) {
+
+        this.fit();
+        return true;
+
         this.cachedTextString = null;
 
         if (evt.isAltDown() && evt.isArrowKey()) {
@@ -1763,6 +1781,46 @@ Object.extend(lively.morphic.NewText, {
         // set in onFocus and onBlur
         return this.prototype.activeInstance;
     },
+});
+Object.subclass('lively.LeanText',
+/*
+ * lively.LeanText: How to build an in-place WYSIWIG (Rich)Text Editor
+ * that can also be use from outside Lively.
+ * This Text implementation heavily relies on jQuery and thus HTML
+ */
+
+'default category', {
+    initialize: function(parentNode) {
+        this.parentNode = parentNode;
+        this.textNode = null;
+        this.createTextNode();
+        this.padding = 2;
+    },
+
+    createTextNode: function() {
+        this.textNode = $('<div>Sample Text</div>');
+        this.textNode.attr('contenteditable', 'true');
+        this.textNode.attr('width', '100%');
+        this.textNode.attr('height', '100%');
+        this.textNode.css('padding: ' + this.padding + 'px');
+        $(this.parentNode).append(this.textNode);
+    },
+    getWidth: function() {
+        return $(this.textNode).width() + 2 * this.padding;
+    },
+    getHeight: function() {
+        return $(this.textNode).height() + 2 * this.padding;
+    },
+    getText: function() {
+        return $(this.textNode).text();
+    },
+    setText: function(aString) {
+        $(this.textNode).text(aString);
+    },
+
+
+
+
 });
 
 }) // end of module
