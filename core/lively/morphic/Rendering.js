@@ -1,4 +1,4 @@
-module('lively.morphic.Rendering').requires('lively.morphic.Core', 'lively.morphic.TextCore', 'lively.morphic.Shapes').toRun(function() {
+module('lively.morphic.Rendering').requires('lively.morphic.Core', 'lively.morphic.TextCore', 'lively.morphic.Shapes', 'lively.morphic.TextExperiments').toRun(function() {
 
 Trait('lively.morphic.Renderable',
 'accessing', {
