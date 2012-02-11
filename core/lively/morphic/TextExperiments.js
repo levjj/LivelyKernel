@@ -1866,7 +1866,10 @@ Object.subclass('lively.LeanText',
         this.textNode.attr('contenteditable', 'true');
         this.textNode.attr('width', '100%');
         this.textNode.attr('height', '100%');
-        this.textNode.css('padding: ' + this.padding + 'px');
+        this.textNode.css('padding', this.padding + 'px');
+        this.textNode.css('white-space', 'pre-wrap');
+        this.textNode.css('word-wrap', 'break-word');
+            // variable width: 'pre', 'normal'
         $(this.parentNode).append(this.textNode);
         return this.textNode;
     },

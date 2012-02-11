@@ -961,5 +961,4 @@ getPathBoundsHTML: function (ctx) {
     },
 });
 
-
 }) // end of module
