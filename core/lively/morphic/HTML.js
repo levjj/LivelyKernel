@@ -1120,6 +1120,10 @@ lively.morphic.NewText.addMethods(
 },
 'node creation', {
     createTextNodeHTML: function() {
+
+        //this.leanText = new lively.LeanText(this.renderContext().shapeNode);
+        //return this.leanText.getTextNode();
+        
         var node = XHTMLNS.create('div');
         node.contentEditable = true;
         node.className = 'visibleSelection';

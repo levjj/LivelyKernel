@@ -29,6 +29,9 @@ lively.morphic.Morph.subclass('lively.morphic.NewText', Trait('ScrollableTrait')
         $super(this.defaultShape());
         
         this.leanText = new lively.LeanText(this.renderContext().shapeNode);
+        //this.textNode = this.leanText.getTextNode();
+
+        //this.leanText = this.renderContextDispatch('createTextNode');
 
         this.setExtent(pt(100,100));
 
@@ -1877,6 +1880,10 @@ Object.subclass('lively.LeanText',
     setText: function(aString) {
         $(this.textNode).text(aString);
     },
+    getTextNode: function() {
+        return this.textNode;
+    },
+
 
 
 
