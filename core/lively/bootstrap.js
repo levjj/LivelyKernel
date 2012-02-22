@@ -462,8 +462,7 @@ var LivelyLoader = {
             'lively/Migration.js',
             'lively/JSON.js',
             'lively/miniprototype.js',
-            'lively/defaultconfig.js',
-            'lively/localconfig.js'],
+            'lively/defaultconfig.js'],
             function() {
                 var modules1 =  [
                     'lively/Base.js',
@@ -599,7 +598,6 @@ var LivelyLoader = {
             'lively/lang/Array.js',
             'lively/lang/Number.js',
             'lively/defaultconfig.js',
-            'lively/localconfig.js',
             'lively/Base.js',
             'lively/lang/Closure.js',   // FIXME: require module instead
             'lively/lang/UUID.js',       // FIXME: require module instead
@@ -629,9 +627,12 @@ var LivelyLoader = {
             'lively/JSON.js',
             'lively/miniprototype.js',
             'lively/defaultconfig.js',
-            'lively/localconfig.js',
             'lively/Base.js'].concat(moduleNames),
             thenDoFunc);
+    },
+
+    loadLocalConfig: function() {
+        JSLoader.loadJs(LivelyLoader.codeBase + 'lively/localconfig.js', null, false);
     },
 
     loadUserConfig: function() {
