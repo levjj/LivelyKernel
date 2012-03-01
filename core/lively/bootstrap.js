@@ -1,5 +1,6 @@
 var isFirefox = window.navigator.userAgent.indexOf('Firefox') > -1;
 var isFireBug = isFirefox && window.console && window.console.firebug !== undefined;
+var webServerName = "life_star";
 
 (function setupConsole() {
 
@@ -78,7 +79,7 @@ var JSLoader = {
 
         // adapt URL
         var exactUrl = url;
-        if ((exactUrl.indexOf('!svn') <= 0) && !okToUseCache)
+        if (webServerName != 'life_star' && (exactUrl.indexOf('!svn') <= 0) && !okToUseCache)
             exactUrl = this.makeUncached(exactUrl, cacheQuery);
 
         // create and configure script tag
